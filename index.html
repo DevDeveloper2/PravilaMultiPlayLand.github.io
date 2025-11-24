@@ -1,4 +1,4 @@
-[⚠️ Suspicious Content] <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -1266,25 +1266,33 @@
             </div>
             
             <div class="appeals-header">
-                <h1 class="appeals-title">Просмотр апелляций</h1>
-                <p class="appeals-subtitle">Поиск и просмотр поданных апелляций</p>
+                <h1 class="appeals-title">Апелляции участников</h1>
+                <p class="appeals-subtitle">Все поданные апелляции на сервере</p>
             </div>
             
             <div class="appeals-container">
                 <div class="appeals-search">
                     <h3 class="search-title">Поиск апелляций</h3>
                     <div class="search-form">
-                        <input type="text" class="search-input" id="searchUsername" placeholder="Введите Discord username (например, username123)">
+                        <input type="text" class="search-input" id="searchUsername" placeholder="Введите Discord username для поиска">
                         <button class="search-btn" id="searchAppeals">
-                            <i class="fas fa-search"></i> Найти апелляции
+                            <i class="fas fa-search"></i> Найти
+                        </button>
+                        <button class="search-btn" id="showAllAppeals" style="background: linear-gradient(45deg, #43b581, #3aa370);">
+                            <i class="fas fa-list"></i> Показать все
                         </button>
                     </div>
                 </div>
                 
                 <div class="appeals-results" id="appealsResults">
-                    <h3 class="results-title">Результаты поиска</h3>
+                    <div class="results-header">
+                        <h3 class="results-title" id="resultsTitle">Все апелляции</h3>
+                        <div class="results-stats" id="resultsStats">
+                            <!-- Статистика будет обновляться здесь -->
+                        </div>
+                    </div>
                     <div id="appealsList">
-                        <!-- Апелляции будут загружены здесь -->
+                        <!-- Апелляции будут загружены здесь автоматически -->
                     </div>
                 </div>
             </div>
@@ -1349,47 +1357,89 @@
     <!-- Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-     <script>
-        // Элементы страницы
-        const rulesPage = document.getElementById('rulesPage');
-        const bansPage = document.getElementById('bansPage');
-        const newsPage = document.getElementById('newsPage');
-        const blacklistPage = document.getElementById('blacklistPage');
-        const appealsPage = document.getElementById('appealsPage');
-        const acceptBtn = document.getElementById('acceptRules');
-        const backBtn = document.getElementById('backToRules');
-        const backBtnFromNews = document.getElementById('backToRulesFromNews');
-        const backBtnFromBlacklist = document.getElementById('backToRulesFromBlacklist');
-        const backBtnFromAppeals = document.getElementById('backToRulesFromAppeals');
-        const transitionOverlay = document.getElementById('transitionOverlay');
-        const showAppealFormBtn = document.getElementById('showAppealForm');
-        const viewAppealsBtn = document.getElementById('viewAppeals');
-        const appealModal = document.getElementById('appealModal');
-        const cancelAppealBtn = document.getElementById('cancelAppeal');
-        const appealForm = document.getElementById('appealForm');
-        const successMessage = document.getElementById('successMessage');
-        const usernameError = document.getElementById('usernameError');
-        const emailError = document.getElementById('emailError');
-        const navTabs = document.querySelectorAll('.nav-tab');
-        const searchAppealsBtn = document.getElementById('searchAppeals');
-        const searchUsernameInput = document.getElementById('searchUsername');
-        const appealsResults = document.getElementById('appealsResults');
-        const appealsList = document.getElementById('appealsList');
+    <script>
+    // УДАЛИ ЭТОТ БЛОК ЕСЛИ ОН УЖЕ ЕСТЬ В ТВОЕМ КОДЕ
+    // Элементы страницы
+    const rulesPage = document.getElementById('rulesPage');
+    const bansPage = document.getElementById('bansPage');
+    const newsPage = document.getElementById('newsPage');
+    const blacklistPage = document.getElementById('blacklistPage');
+    const appealsPage = document.getElementById('appealsPage');
+    const acceptBtn = document.getElementById('acceptRules');
+    const backBtn = document.getElementById('backToRules');
+    const backBtnFromNews = document.getElementById('backToRulesFromNews');
+    const backBtnFromBlacklist = document.getElementById('backToRulesFromBlacklist');
+    const backBtnFromAppeals = document.getElementById('backToRulesFromAppeals');
+    const transitionOverlay = document.getElementById('transitionOverlay');
+    const showAppealFormBtn = document.getElementById('showAppealForm');
+    const viewAppealsBtn = document.getElementById('viewAppeals');
+    const appealModal = document.getElementById('appealModal');
+    const cancelAppealBtn = document.getElementById('cancelAppeal');
+    const appealForm = document.getElementById('appealForm');
+    const successMessage = document.getElementById('successMessage');
+    const usernameError = document.getElementById('usernameError');
+    const emailError = document.getElementById('emailError');
+    const navTabs = document.querySelectorAll('.nav-tab');
+    
+    // Элементы для апелляций - ДОБАВЬ ТОЛЬКО ЭТИ СТРОКИ
+    const searchAppealsBtn = document.getElementById('searchAppeals');
+    const showAllAppealsBtn = document.getElementById('showAllAppeals');
+    const searchUsernameInput = document.getElementById('searchUsername');
+    const appealsResults = document.getElementById('appealsResults');
+    const appealsList = document.getElementById('appealsList');
+    const resultsTitle = document.getElementById('resultsTitle');
+    const resultsStats = document.getElementById('resultsStats');
         
-        // Хранилище апелляций (в реальном приложении это будет база данных)
+        // Хранилище апелляций
         let appealsStorage = JSON.parse(localStorage.getItem('discordAppeals')) || [];
-        
-        // Валидация Discord username (новый формат)
-        function validateDiscordUsername(username) {
-            // Новый формат Discord username (без #)
-            const regex = /^[a-zA-Z0-9_.]{2,32}$/;
-            return regex.test(username);
-        }
-        
-        // Валидация email
-        function validateEmail(email) {
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return regex.test(email);
+
+        // Инициализация тестовых апелляций
+        function initializeSampleAppeals() {
+            if (appealsStorage.length === 0) {
+                appealsStorage = [
+                    {
+                        id: '1',
+                        username: 'gamer_pro',
+                        email: 'gamer@example.com',
+                        ban_type: 'ban',
+                        ban_reason: 'Оскорбление участников',
+                        appeal_text: 'Я не оскорблял никого, это было недопонимание. Прошу разобраться в ситуации.',
+                        date: '2024-03-20 14:30',
+                        status: 'pending'
+                    },
+                    {
+                        id: '2',
+                        username: 'stream_lover',
+                        email: 'streamer@mail.com',
+                        ban_type: 'mute',
+                        ban_reason: 'Спам в голосовом чате',
+                        appeal_text: 'Извиняюсь за свое поведение, это была шутка которая зашла слишком далю. Обещаю больше так не делать.',
+                        date: '2024-03-19 10:15',
+                        status: 'approved'
+                    },
+                    {
+                        id: '3',
+                        username: 'tech_wizard',
+                        email: 'tech@domain.com',
+                        ban_type: 'ban',
+                        ban_reason: 'Распространение вредоносных ссылок',
+                        appeal_text: 'Ссылка была безопасной, это был просто мод для игры. Могу предоставить доказательства.',
+                        date: '2024-03-18 16:45',
+                        status: 'rejected'
+                    },
+                    {
+                        id: '4', 
+                        username: 'music_fan',
+                        email: 'music@email.com',
+                        ban_type: 'warning',
+                        ban_reason: 'Нарушение правил NSFW',
+                        appeal_text: 'Я не знал что картинка считается NSFW, удалил ее сразу как только понял. Прошу снять предупреждение.',
+                        date: '2024-03-17 09:20',
+                        status: 'pending'
+                    }
+                ];
+                localStorage.setItem('discordAppeals', JSON.stringify(appealsStorage));
+            }
         }
         
         // Переключение между страницами
@@ -1423,7 +1473,7 @@
                         break;
                     case 'appeals':
                         appealsPage.style.display = 'block';
-                        // АВТОМАТИЧЕСКИ ПОКАЗЫВАЕМ ВСЕ АПЕЛЛЯЦИИ ПРИ ПЕРЕХОДЕ НА ВКЛАДКУ
+                        // АВТОМАТИЧЕСКИ ПОКАЗЫВАЕМ ВСЕ АПЕЛЛЯЦИИ ПРИ ПЕРЕХОДЕ
                         setTimeout(() => {
                             displayAllAppeals();
                         }, 300);
@@ -1444,12 +1494,11 @@
             }, 800);
         }
         
-        // Обработчик кнопки "Принять правила"
+        // Обработчики кнопок
         acceptBtn.addEventListener('click', function() {
             switchPage('bans');
         });
         
-        // Обработчик кнопки "Вернуться к правилам"
         backBtn.addEventListener('click', function() {
             switchPage('rules');
         });
@@ -1497,7 +1546,6 @@
         appealForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Получаем значения полей
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const banType = document.getElementById('banType').value;
@@ -1532,7 +1580,7 @@
                 ban_reason: banReason,
                 appeal_text: appealText,
                 date: new Date().toLocaleString('ru-RU'),
-                status: 'pending' // pending, approved, rejected
+                status: 'pending'
             };
             
             // Сохраняем в хранилище
@@ -1543,7 +1591,6 @@
             successMessage.style.display = 'block';
             appealForm.reset();
             
-            // Через 3 секунды закрываем форму
             setTimeout(function() {
                 appealModal.classList.remove('active');
                 successMessage.style.display = 'none';
@@ -1551,21 +1598,36 @@
             }, 3000);
         });
         
+        // Валидация Discord username
+        function validateDiscordUsername(username) {
+            const regex = /^[a-zA-Z0-9_.]{2,32}$/;
+            return regex.test(username);
+        }
+        
+        // Валидация email
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+        
+        // Показать все апелляции
+        showAllAppealsBtn.addEventListener('click', function() {
+            displayAllAppeals();
+        });
+        
         // Поиск апелляций по username
         searchAppealsBtn.addEventListener('click', function() {
             const username = searchUsernameInput.value.trim().toLowerCase();
             
             if (!username) {
-                alert('Пожалуйста, введите Discord username для поиска');
+                displayAllAppeals();
                 return;
             }
             
-            // Ищем апелляции пользователя
             const userAppeals = appealsStorage.filter(appeal => 
-                appeal.username.toLowerCase() === username
+                appeal.username.toLowerCase().includes(username)
             );
             
-            // Отображаем результаты
             displayAppeals(userAppeals, `Результаты поиска для: ${username}`);
         });
         
@@ -1574,62 +1636,136 @@
             appealsList.innerHTML = '';
             
             if (appealsStorage.length === 0) {
-                appealsList.innerHTML = '<div class="no-results">Апелляции не найдены</div>';
-                document.querySelector('.results-title').textContent = 'Все апелляции';
+                appealsList.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>Апелляции не найдены</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Будьте первым, кто подаст апелляцию!</p>
+                    </div>
+                `;
+                resultsTitle.textContent = 'Все апелляции';
+                updateAppealsStats();
             } else {
-                // Сортируем апелляции по дате (новые сверху)
                 const sortedAppeals = appealsStorage.sort((a, b) => b.id - a.id);
                 
-                sortedAppeals.forEach(appeal => {
-                    const appealItem = document.createElement('div');
-                    appealItem.className = 'appeal-item';
-                    
-                    let statusClass = 'status-pending';
-                    let statusText = 'На рассмотрении';
-                    
-                    if (appeal.status === 'approved') {
-                        statusClass = 'status-approved';
-                        statusText = 'Одобрена';
-                    } else if (appeal.status === 'rejected') {
-                        statusClass = 'status-rejected';
-                        statusText = 'Отклонена';
-                    }
-                    
-                    appealItem.innerHTML = `
-                        <div class="appeal-header">
-                            <div class="appeal-username">${appeal.username}</div>
-                            <div class="appeal-date">${appeal.date}</div>
-                        </div>
-                        <div class="appeal-details">
-                            <div class="appeal-detail">
-                                <span class="detail-label">Тип санкции:</span>
-                                <span class="detail-value">${appeal.ban_type}</span>
-                            </div>
-                            <div class="appeal-detail">
-                                <span class="detail-label">Причина санкции:</span>
-                                <span class="detail-value">${appeal.ban_reason}</span>
-                            </div>
-                            <div class="appeal-detail">
-                                <span class="detail-label">Обоснование апелляции:</span>
-                                <span class="detail-value">${appeal.appeal_text}</span>
-                            </div>
-                            <div class="appeal-detail">
-                                <span class="detail-label">Email для связи:</span>
-                                <span class="detail-value">${appeal.email}</span>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="appeal-status ${statusClass}">${statusText}</span>
-                        </div>
-                    `;
-                    
+                sortedAppeals.forEach((appeal, index) => {
+                    const appealItem = createAppealElement(appeal, index);
                     appealsList.appendChild(appealItem);
                 });
                 
-                document.querySelector('.results-title').textContent = `Все апелляции (${appealsStorage.length})`;
+                resultsTitle.textContent = `Все апелляции (${appealsStorage.length})`;
+                updateAppealsStats();
             }
             
             appealsResults.style.display = 'block';
+        }
+        
+        // Функция для создания элемента апелляции
+        function createAppealElement(appeal, index) {
+            const appealItem = document.createElement('div');
+            appealItem.className = 'appeal-item';
+            appealItem.style.animationDelay = `${index * 0.1}s`;
+            
+            let statusClass = 'status-pending';
+            let statusText = 'На рассмотрении';
+            let statusIcon = 'fa-clock';
+            
+            if (appeal.status === 'approved') {
+                statusClass = 'status-approved';
+                statusText = 'Одобрена';
+                statusIcon = 'fa-check-circle';
+            } else if (appeal.status === 'rejected') {
+                statusClass = 'status-rejected';
+                statusText = 'Отклонена';
+                statusIcon = 'fa-times-circle';
+            }
+            
+            appealItem.innerHTML = `
+                <div class="appeal-header">
+                    <div class="appeal-user-info">
+                        <div class="appeal-username">
+                            <i class="fas fa-user"></i> ${appeal.username}
+                        </div>
+                        <div class="appeal-date">
+                            <i class="fas fa-calendar"></i> ${appeal.date}
+                        </div>
+                    </div>
+                    <div class="appeal-status-container">
+                        <span class="appeal-status ${statusClass}">
+                            <i class="fas ${statusIcon}"></i> ${statusText}
+                        </span>
+                    </div>
+                </div>
+                <div class="appeal-details">
+                    <div class="appeal-detail">
+                        <span class="detail-label">
+                            <i class="fas fa-ban"></i> Тип санкции:
+                        </span>
+                        <span class="detail-value">${getBanTypeText(appeal.ban_type)}</span>
+                    </div>
+                    <div class="appeal-detail">
+                        <span class="detail-label">
+                            <i class="fas fa-exclamation-triangle"></i> Причина санкции:
+                        </span>
+                        <span class="detail-value">${appeal.ban_reason}</span>
+                    </div>
+                    <div class="appeal-detail">
+                        <span class="detail-label">
+                            <i class="fas fa-comment"></i> Обоснование апелляции:
+                        </span>
+                        <span class="detail-value appeal-text">${appeal.appeal_text}</span>
+                    </div>
+                    <div class="appeal-detail">
+                        <span class="detail-label">
+                            <i class="fas fa-envelope"></i> Контакт:
+                        </span>
+                        <span class="detail-value">${appeal.email}</span>
+                    </div>
+                </div>
+            `;
+            
+            return appealItem;
+        }
+        
+        // Функция для получения текста типа санкции
+        function getBanTypeText(banType) {
+            const banTypes = {
+                'ban': 'Бан',
+                'mute': 'Мут',
+                'kick': 'Кик',
+                'warning': 'Предупреждение',
+                'other': 'Другое'
+            };
+            return banTypes[banType] || banType;
+        }
+        
+        // Функция для обновления статистики апелляций
+        function updateAppealsStats() {
+            const total = appealsStorage.length;
+            const pending = appealsStorage.filter(a => a.status === 'pending').length;
+            const approved = appealsStorage.filter(a => a.status === 'approved').length;
+            const rejected = appealsStorage.filter(a => a.status === 'rejected').length;
+            
+            resultsStats.innerHTML = `
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number">${total}</span>
+                        <span class="stat-label">Всего</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number stat-pending">${pending}</span>
+                        <span class="stat-label">На рассмотрении</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number stat-approved">${approved}</span>
+                        <span class="stat-label">Одобрено</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number stat-rejected">${rejected}</span>
+                        <span class="stat-label">Отклонено</span>
+                    </div>
+                </div>
+            `;
         }
         
         // Отображение списка апелляций (для поиска)
@@ -1637,107 +1773,29 @@
             appealsList.innerHTML = '';
             
             if (appeals.length === 0) {
-                appealsList.innerHTML = '<div class="no-results">Апелляции не найдены для данного пользователя</div>';
+                appealsList.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>Апелляции не найдены</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Попробуйте изменить запрос поиска</p>
+                    </div>
+                `;
             } else {
-                appeals.forEach(appeal => {
-                    const appealItem = document.createElement('div');
-                    appealItem.className = 'appeal-item';
-                    
-                    let statusClass = 'status-pending';
-                    let statusText = 'На рассмотрении';
-                    
-                    if (appeal.status === 'approved') {
-                        statusClass = 'status-approved';
-                        statusText = 'Одобрена';
-                    } else if (appeal.status === 'rejected') {
-                        statusClass = 'status-rejected';
-                        statusText = 'Отклонена';
-                    }
-                    
-                    appealItem.innerHTML = `
-                        <div class="appeal-header">
-                            <div class="appeal-username">${appeal.username}</div>
-                            <div class="appeal-date">${appeal.date}</div>
-                        </div>
-                        <div class="appeal-details">
-                            <div class="appeal-detail">
-                                <span class="detail-label">Тип санкции:</span>
-                                <span class="detail-value">${appeal.ban_type}</span>
-                            </div>
-                            <div class="appeal-detail">
-                                <span class="detail-label">Причина санкции:</span>
-                                <span class="detail-value">${appeal.ban_reason}</span>
-                            </div>
-                            <div class="appeal-detail">
-                                <span class="detail-label">Обоснование апелляции:</span>
-                                <span class="detail-value">${appeal.appeal_text}</span>
-                            </div>
-                            <div class="appeal-detail">
-                                <span class="detail-label">Email для связи:</span>
-                                <span class="detail-value">${appeal.email}</span>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="appeal-status ${statusClass}">${statusText}</span>
-                        </div>
-                    `;
-                    
+                appeals.forEach((appeal, index) => {
+                    const appealItem = createAppealElement(appeal, index);
                     appealsList.appendChild(appealItem);
                 });
             }
             
-            document.querySelector('.results-title').textContent = title;
+            resultsTitle.textContent = title;
             appealsResults.style.display = 'block';
         }
         
-        // Функция для имитации загрузки данных о банах
-        function simulateBansLoading() {
-            const rows = document.querySelectorAll('.bans-table tbody tr');
-            rows.forEach((row, index) => {
-                row.style.opacity = '0';
-                row.style.transform = 'translateY(20px)';
-                row.style.transition = 'all 0.5s ease';
-                
-                setTimeout(() => {
-                    row.style.opacity = '1';
-                    row.style.transform = 'translateY(0)';
-                }, 100 * index + 300);
-            });
-        }
-        
-        // Функция для имитации загрузки новостей
-        function simulateNewsLoading() {
-            const newsItems = document.querySelectorAll('.news-item');
-            newsItems.forEach((item, index) => {
-                item.style.opacity = '0';
-                item.style.transform = 'translateX(-50px)';
-                item.style.transition = 'all 0.5s ease';
-                
-                setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateX(0)';
-                }, 150 * index + 300);
-            });
-        }
-        
-        // Функция для имитации загрузки чёрного списка
-        function simulateBlacklistLoading() {
-            const rows = document.querySelectorAll('.blacklist-table tbody tr');
-            rows.forEach((row, index) => {
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(50px)';
-                row.style.transition = 'all 0.5s ease';
-                
-                setTimeout(() => {
-                    row.style.opacity = '1';
-                    row.style.transform = 'translateX(0)';
-                }, 100 * index + 300);
-            });
-        }
-        
-        // Дополнительные анимации при загрузке страницы
+        // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            // Анимация появления пунктов правил
+            initializeSampleAppeals();
+            
+            // Анимации...
             const rulesItems = document.querySelectorAll('.rules-list li');
             rulesItems.forEach((item, index) => {
                 item.style.opacity = '0';
@@ -1749,28 +1807,6 @@
                     item.style.transform = 'translateX(0)';
                 }, 100 * index + 500);
             });
-            
-            // Анимация категорий правил
-            const ruleCategories = document.querySelectorAll('.rule-category');
-            ruleCategories.forEach((category, index) => {
-                category.style.opacity = '0';
-                category.style.transform = 'translateY(-20px)';
-                category.style.transition = 'all 0.5s ease';
-                
-                setTimeout(() => {
-                    category.style.opacity = '1';
-                    category.style.transform = 'translateY(0)';
-                }, 100 * index + 300);
-            });
-        });
-        
-        // Дополнительный эффект для кнопки принятия правил
-        acceptBtn.addEventListener('mousemove', function(e) {
-            const x = e.pageX - acceptBtn.offsetLeft;
-            const y = e.pageY - acceptBtn.offsetTop;
-            
-            acceptBtn.style.setProperty('--x', x + 'px');
-            acceptBtn.style.setProperty('--y', y + 'px');
         });
     </script>
 </body>
