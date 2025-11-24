@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[⚠️ Suspicious Content] <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -1382,7 +1382,6 @@
     const navTabs = document.querySelectorAll('.nav-tab');
     
     // Элементы для апелляций - ДОБАВЬ ТОЛЬКО ЭТИ СТРОКИ
-     // Элементы для апелляций
     const searchAppealsBtn = document.getElementById('searchAppeals');
     const showAllAppealsBtn = document.getElementById('showAllAppeals');
     const searchUsernameInput = document.getElementById('searchUsername');
@@ -1391,73 +1390,83 @@
     const resultsTitle = document.getElementById('resultsTitle');
     const resultsStats = document.getElementById('resultsStats');
     
-    // ОБЩЕЕ ХРАНИЛИЩЕ АПЕЛЛЯЦИЙ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
-    let appealsStorage = [];
+    // ОБЩАЯ БАЗА АПЕЛЛЯЦИЙ ДЛЯ ВСЕХ
+    let globalAppeals = [];
 
-    // Инициализация тестовых апелляций (всегда показываем одни и те же)
-    function initializeSampleAppeals() {
-        // Всегда используем фиксированный набор апелляций
-        appealsStorage = [
-            {
-                id: '1',
-                username: 'gamer_pro',
-                email: 'gamer@example.com',
-                ban_type: 'ban',
-                ban_reason: 'Оскорбление участников',
-                appeal_text: 'Я не оскорблял никого, это было недопонимание. Прошу разобраться в ситуации.',
-                date: '2024-03-20 14:30',
-                status: 'pending'
-            },
-            {
-                id: '2',
-                username: 'stream_lover',
-                email: 'streamer@mail.com',
-                ban_type: 'mute',
-                ban_reason: 'Спам в голосовом чате',
-                appeal_text: 'Извиняюсь за свое поведение, это была шутка которая зашла слишком далю. Обещаю больше так не делать.',
-                date: '2024-03-19 10:15',
-                status: 'approved'
-            },
-            {
-                id: '3',
-                username: 'tech_wizard',
-                email: 'tech@domain.com',
-                ban_type: 'ban',
-                ban_reason: 'Распространение вредоносных ссылок',
-                appeal_text: 'Ссылка была безопасной, это был просто мод для игры. Могу предоставить доказательства.',
-                date: '2024-03-18 16:45',
-                status: 'rejected'
-            },
-            {
-                id: '4', 
-                username: 'music_fan',
-                email: 'music@email.com',
-                ban_type: 'warning',
-                ban_reason: 'Нарушение правил NSFW',
-                appeal_text: 'Я не знал что картинка считается NSFW, удалил ее сразу как только понял. Прошу снять предупреждение.',
-                date: '2024-03-17 09:20',
-                status: 'pending'
-            },
-            {
-                id: '5',
-                username: 'pro_gamer',
-                email: 'pro@game.com',
-                ban_type: 'ban',
-                ban_reason: 'Неспортивное поведение',
-                appeal_text: 'Я просто хотел помочь новичкам, но меня неправильно поняли. Готов извиниться перед всеми.',
-                date: '2024-03-16 18:30',
-                status: 'pending'
-            }
-        ];
+    // ФИКСИРОВАННЫЕ АПЕЛЛЯЦИИ КОТОРЫЕ ВИДНЫ ВСЕМ
+    const fixedAppeals = [
+        {
+            id: '1',
+            username: 'gamer_pro',
+            email: 'gamer@example.com',
+            ban_type: 'ban',
+            ban_reason: 'Оскорбление участников',
+            appeal_text: 'Я не оскорблял никого, это было недопонимание. Прошу разобраться в ситуации.',
+            date: '2024-03-20 14:30',
+            status: 'pending'
+        },
+        {
+            id: '2',
+            username: 'stream_lover',
+            email: 'streamer@mail.com',
+            ban_type: 'mute',
+            ban_reason: 'Спам в голосовом чате',
+            appeal_text: 'Извиняюсь за свое поведение, это была шутка которая зашла слишком далю. Обещаю больше так не делать.',
+            date: '2024-03-19 10:15',
+            status: 'approved'
+        },
+        {
+            id: '3',
+            username: 'tech_wizard',
+            email: 'tech@domain.com',
+            ban_type: 'ban',
+            ban_reason: 'Распространение вредоносных ссылок',
+            appeal_text: 'Ссылка была безопасной, это был просто мод для игры. Могу предоставить доказательства.',
+            date: '2024-03-18 16:45',
+            status: 'rejected'
+        }
+    ];
 
-        // ДОБАВЛЯЕМ АПЕЛЛЯЦИИ ИЗ LOCALSTORAGE К ОБЩИМ
+    // Инициализация апелляций
+    function initializeAppeals() {
+        // Всегда показываем фиксированные апелляции
+        globalAppeals = [...fixedAppeals];
+        
+        // Добавляем апелляции из localStorage текущего пользователя
         const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
         userAppeals.forEach(appeal => {
-            // Проверяем, нет ли уже такой апелляции
-            if (!appealsStorage.find(a => a.id === appeal.id)) {
-                appealsStorage.push(appeal);
+            if (!globalAppeals.find(a => a.id === appeal.id)) {
+                globalAppeals.push(appeal);
             }
         });
+
+        // Пытаемся загрузить общие апелляции из sessionStorage (временное решение)
+        const sharedAppeals = JSON.parse(sessionStorage.getItem('sharedAppeals')) || [];
+        sharedAppeals.forEach(appeal => {
+            if (!globalAppeals.find(a => a.id === appeal.id)) {
+                globalAppeals.push(appeal);
+            }
+        });
+
+        console.log('Загружено апелляций:', globalAppeals.length);
+    }
+
+    // Сохраняем апелляцию в общее хранилище
+    function saveToSharedStorage(appeal) {
+        // Сохраняем в localStorage пользователя
+        const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
+        userAppeals.push(appeal);
+        localStorage.setItem('discordAppeals', JSON.stringify(userAppeals));
+        
+        // Сохраняем в sessionStorage как временное общее хранилище
+        const sharedAppeals = JSON.parse(sessionStorage.getItem('sharedAppeals')) || [];
+        sharedAppeals.push(appeal);
+        sessionStorage.setItem('sharedAppeals', JSON.stringify(sharedAppeals));
+        
+        // Добавляем в текущий список
+        if (!globalAppeals.find(a => a.id === appeal.id)) {
+            globalAppeals.push(appeal);
+        }
     }
     
     // Показать все апелляции
@@ -1474,7 +1483,7 @@
             return;
         }
         
-        const userAppeals = appealsStorage.filter(appeal => 
+        const userAppeals = globalAppeals.filter(appeal => 
             appeal.username.toLowerCase().includes(username)
         );
         
@@ -1485,7 +1494,7 @@
     function displayAllAppeals() {
         appealsList.innerHTML = '';
         
-        if (appealsStorage.length === 0) {
+        if (globalAppeals.length === 0) {
             appealsList.innerHTML = `
                 <div class="no-results">
                     <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
@@ -1497,14 +1506,14 @@
             updateAppealsStats();
         } else {
             // Сортируем по дате (новые сверху)
-            const sortedAppeals = [...appealsStorage].sort((a, b) => b.id - a.id);
+            const sortedAppeals = [...globalAppeals].sort((a, b) => b.id - a.id);
             
             sortedAppeals.forEach((appeal, index) => {
                 const appealItem = createAppealElement(appeal, index);
                 appealsList.appendChild(appealItem);
             });
             
-            resultsTitle.textContent = `Все апелляции (${appealsStorage.length})`;
+            resultsTitle.textContent = `Все апелляции (${globalAppeals.length})`;
             updateAppealsStats();
         }
         
@@ -1592,10 +1601,10 @@
     
     // Функция для обновления статистики апелляций
     function updateAppealsStats() {
-        const total = appealsStorage.length;
-        const pending = appealsStorage.filter(a => a.status === 'pending').length;
-        const approved = appealsStorage.filter(a => a.status === 'approved').length;
-        const rejected = appealsStorage.filter(a => a.status === 'rejected').length;
+        const total = globalAppeals.length;
+        const pending = globalAppeals.filter(a => a.status === 'pending').length;
+        const approved = globalAppeals.filter(a => a.status === 'approved').length;
+        const rejected = globalAppeals.filter(a => a.status === 'rejected').length;
         
         resultsStats.innerHTML = `
             <div class="stats-container">
@@ -1683,13 +1692,8 @@
             status: 'pending'
         };
         
-        // Сохраняем в ОБЩЕЕ хранилище
-        appealsStorage.push(appeal);
-        
-        // Также сохраняем в localStorage для текущего пользователя
-        const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
-        userAppeals.push(appeal);
-        localStorage.setItem('discordAppeals', JSON.stringify(userAppeals));
+        // Сохраняем в общее хранилище
+        saveToSharedStorage(appeal);
         
         // Показываем сообщение об успехе
         successMessage.style.display = 'block';
@@ -1751,7 +1755,7 @@
                 case 'appeals':
                     appealsPage.style.display = 'block';
                     // ОБНОВЛЯЕМ ДАННЫЕ ПЕРЕД ПОКАЗОМ
-                    initializeSampleAppeals();
+                    initializeAppeals();
                     setTimeout(() => {
                         displayAllAppeals();
                     }, 300);
@@ -1774,7 +1778,15 @@
 
     // Инициализация при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
-        initializeSampleAppeals();
+        initializeAppeals();
+        
+        // Периодически обновляем апелляции (каждые 10 секунд)
+        setInterval(() => {
+            if (appealsPage.style.display === 'block') {
+                initializeAppeals();
+                displayAllAppeals();
+            }
+        }, 10000);
     });
         
         // Обработчики кнопок
