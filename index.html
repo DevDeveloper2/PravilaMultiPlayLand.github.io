@@ -453,6 +453,187 @@
             overflow: visible;
         }
         
+        /* Страница апелляций */
+        .appeals-page {
+            display: none;
+            min-height: 100vh;
+            padding: 50px 20px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .appeals-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideUp 1s ease-out;
+        }
+        
+        .appeals-title {
+            font-size: 2.5rem;
+            color: #7289DA;
+            margin-bottom: 10px;
+        }
+        
+        .appeals-subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+        
+        .appeals-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .appeals-search {
+            background: rgba(30, 30, 45, 0.9);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(114, 137, 218, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .search-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #7289DA;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(114, 137, 218, 0.3);
+            background: rgba(20, 20, 35, 0.8);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #7289DA;
+            box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
+        }
+        
+        .search-btn {
+            background: linear-gradient(45deg, #7289DA, #5b6eae);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(114, 137, 218, 0.5);
+        }
+        
+        .appeals-results {
+            display: none;
+            background: rgba(30, 30, 45, 0.9);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(114, 137, 218, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #7289DA;
+        }
+        
+        .appeal-item {
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #7289DA;
+        }
+        
+        .appeal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .appeal-username {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #7289DA;
+        }
+        
+        .appeal-date {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .appeal-details {
+            margin-bottom: 15px;
+        }
+        
+        .appeal-detail {
+            margin-bottom: 8px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #aaa;
+            min-width: 150px;
+        }
+        
+        .detail-value {
+            flex: 1;
+        }
+        
+        .appeal-status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background-color: #faa61a;
+            color: #333;
+        }
+        
+        .status-approved {
+            background-color: #43b581;
+            color: white;
+        }
+        
+        .status-rejected {
+            background-color: #f04747;
+            color: white;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            padding: 30px;
+        }
+        
         /* Эффект перехода между страницами */
         .transition-overlay {
             position: fixed;
@@ -511,7 +692,7 @@
         
         /* Адаптивность */
         @media (max-width: 768px) {
-            .rules-container, .bans-table, .news-container, .blacklist-table {
+            .rules-container, .bans-table, .news-container, .blacklist-table, .appeals-container {
                 width: 100%;
                 padding: 20px 15px;
             }
@@ -520,7 +701,7 @@
                 font-size: 2rem;
             }
             
-            .rules-title, .bans-title, .news-title, .blacklist-title {
+            .rules-title, .bans-title, .news-title, .blacklist-title, .appeals-title {
                 font-size: 1.5rem;
             }
             
@@ -542,6 +723,19 @@
             
             .news-item {
                 padding: 15px;
+            }
+            
+            .appeal-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: auto;
             }
         }
         
@@ -583,6 +777,27 @@
         .appeal-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 7px 20px rgba(250, 166, 26, 0.6);
+        }
+        
+        .view-appeals-btn {
+            background: linear-gradient(45deg, #43b581, #3aa370);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(67, 181, 129, 0.4);
+            font-weight: 600;
+            margin-left: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .view-appeals-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(67, 181, 129, 0.6);
         }
         
         .appeal-modal {
@@ -789,12 +1004,15 @@
                 <li>Если вас забанили по ошибке, вы можете подать апелляцию через специальную форму на нашем сайте.</li>
             </ul>
             
-            <div style="display: flex; justify-content: center; gap: 15px;">
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                 <button class="accept-btn" id="acceptRules">
                     <i class="fas fa-check"></i> Принять правила
                 </button>
                 <button class="appeal-btn" id="showAppealForm">
-                    <i class="fas fa-pen"></i> Апелляция
+                    <i class="fas fa-pen"></i> Подать апелляцию
+                </button>
+                <button class="view-appeals-btn" id="viewAppeals">
+                    <i class="fas fa-search"></i> Просмотр апелляций
                 </button>
             </div>
         </div>
@@ -814,6 +1032,7 @@
                 <button class="nav-tab" data-page="news">Новости</button>
                 <button class="nav-tab active" data-page="bans">Нарушители</button>
                 <button class="nav-tab" data-page="blacklist">Чёрный список</button>
+                <button class="nav-tab" data-page="appeals">Апелляции</button>
             </div>
             
             <div class="bans-header">
@@ -897,6 +1116,7 @@
                 <button class="nav-tab active" data-page="news">Новости</button>
                 <button class="nav-tab" data-page="bans">Нарушители</button>
                 <button class="nav-tab" data-page="blacklist">Чёрный список</button>
+                <button class="nav-tab" data-page="appeals">Апелляции</button>
             </div>
             
             <div class="news-header">
@@ -972,6 +1192,7 @@
                 <button class="nav-tab" data-page="news">Новости</button>
                 <button class="nav-tab" data-page="bans">Нарушители</button>
                 <button class="nav-tab active" data-page="blacklist">Чёрный список</button>
+                <button class="nav-tab" data-page="appeals">Апелляции</button>
             </div>
             
             <div class="blacklist-header">
@@ -1034,14 +1255,54 @@
         </div>
     </div>
     
+    <!-- Страница апелляций -->
+    <div class="appeals-page" id="appealsPage">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab" data-page="news">Новости</button>
+                <button class="nav-tab" data-page="bans">Нарушители</button>
+                <button class="nav-tab" data-page="blacklist">Чёрный список</button>
+                <button class="nav-tab active" data-page="appeals">Апелляции</button>
+            </div>
+            
+            <div class="appeals-header">
+                <h1 class="appeals-title">Просмотр апелляций</h1>
+                <p class="appeals-subtitle">Поиск и просмотр поданных апелляций</p>
+            </div>
+            
+            <div class="appeals-container">
+                <div class="appeals-search">
+                    <h3 class="search-title">Поиск апелляций</h3>
+                    <div class="search-form">
+                        <input type="text" class="search-input" id="searchUsername" placeholder="Введите Discord username (например, username123)">
+                        <button class="search-btn" id="searchAppeals">
+                            <i class="fas fa-search"></i> Найти апелляции
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="appeals-results" id="appealsResults">
+                    <h3 class="results-title">Результаты поиска</h3>
+                    <div id="appealsList">
+                        <!-- Апелляции будут загружены здесь -->
+                    </div>
+                </div>
+            </div>
+            
+            <button class="back-btn" id="backToRulesFromAppeals">
+                <i class="fas fa-arrow-left"></i> Вернуться к правилам
+            </button>
+        </div>
+    </div>
+    
     <!-- Модальное окно апелляции -->
     <div class="appeal-modal" id="appealModal">
         <div class="appeal-form">
             <h2 class="appeal-title">Форма апелляции</h2>
             <form id="appealForm">
-                <label for="username">Ваш Discord username (например, User#1234):</label>
+                <label for="username">Ваш Discord username (например, username123):</label>
                 <input type="text" id="username" name="username" required>
-                <div class="error-message" id="usernameError">Пожалуйста, введите ваш Discord username в формате Name#1234</div>
+                <div class="error-message" id="usernameError">Пожалуйста, введите ваш Discord username</div>
                 
                 <label for="email">Ваш email (для обратной связи):</label>
                 <input type="email" id="email" name="email" required>
@@ -1088,18 +1349,21 @@
     <!-- Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <script>
+     <script>
         // Элементы страницы
         const rulesPage = document.getElementById('rulesPage');
         const bansPage = document.getElementById('bansPage');
         const newsPage = document.getElementById('newsPage');
         const blacklistPage = document.getElementById('blacklistPage');
+        const appealsPage = document.getElementById('appealsPage');
         const acceptBtn = document.getElementById('acceptRules');
         const backBtn = document.getElementById('backToRules');
         const backBtnFromNews = document.getElementById('backToRulesFromNews');
         const backBtnFromBlacklist = document.getElementById('backToRulesFromBlacklist');
+        const backBtnFromAppeals = document.getElementById('backToRulesFromAppeals');
         const transitionOverlay = document.getElementById('transitionOverlay');
         const showAppealFormBtn = document.getElementById('showAppealForm');
+        const viewAppealsBtn = document.getElementById('viewAppeals');
         const appealModal = document.getElementById('appealModal');
         const cancelAppealBtn = document.getElementById('cancelAppeal');
         const appealForm = document.getElementById('appealForm');
@@ -1107,10 +1371,18 @@
         const usernameError = document.getElementById('usernameError');
         const emailError = document.getElementById('emailError');
         const navTabs = document.querySelectorAll('.nav-tab');
+        const searchAppealsBtn = document.getElementById('searchAppeals');
+        const searchUsernameInput = document.getElementById('searchUsername');
+        const appealsResults = document.getElementById('appealsResults');
+        const appealsList = document.getElementById('appealsList');
         
-        // Валидация Discord username
+        // Хранилище апелляций (в реальном приложении это будет база данных)
+        let appealsStorage = JSON.parse(localStorage.getItem('discordAppeals')) || [];
+        
+        // Валидация Discord username (новый формат)
         function validateDiscordUsername(username) {
-            const regex = /^.{3,32}#[0-9]{4}$/;
+            // Новый формат Discord username (без #)
+            const regex = /^[a-zA-Z0-9_.]{2,32}$/;
             return regex.test(username);
         }
         
@@ -1130,6 +1402,7 @@
                 bansPage.style.display = 'none';
                 newsPage.style.display = 'none';
                 blacklistPage.style.display = 'none';
+                appealsPage.style.display = 'none';
                 
                 // Показать выбранную страницу
                 switch(page) {
@@ -1147,6 +1420,13 @@
                     case 'blacklist':
                         blacklistPage.style.display = 'block';
                         simulateBlacklistLoading();
+                        break;
+                    case 'appeals':
+                        appealsPage.style.display = 'block';
+                        // АВТОМАТИЧЕСКИ ПОКАЗЫВАЕМ ВСЕ АПЕЛЛЯЦИИ ПРИ ПЕРЕХОДЕ НА ВКЛАДКУ
+                        setTimeout(() => {
+                            displayAllAppeals();
+                        }, 300);
                         break;
                 }
                 
@@ -1182,6 +1462,10 @@
             switchPage('rules');
         });
         
+        backBtnFromAppeals.addEventListener('click', function() {
+            switchPage('rules');
+        });
+        
         // Обработчики навигационных вкладок
         navTabs.forEach(tab => {
             tab.addEventListener('click', function() {
@@ -1194,6 +1478,11 @@
         showAppealFormBtn.addEventListener('click', function() {
             appealModal.classList.add('active');
             document.body.style.overflow = 'hidden';
+        });
+        
+        // Перейти к просмотру апелляций
+        viewAppealsBtn.addEventListener('click', function() {
+            switchPage('appeals');
         });
         
         // Скрыть форму апелляции
@@ -1234,48 +1523,172 @@
             
             if (!isValid) return;
             
-            // Собираем данные формы
-            const formData = {
+            // Создаем объект апелляции
+            const appeal = {
+                id: Date.now().toString(),
                 username: username,
                 email: email,
                 ban_type: banType,
                 ban_reason: banReason,
                 appeal_text: appealText,
                 date: new Date().toLocaleString('ru-RU'),
-                server_name: 'Просто общаемся'
+                status: 'pending' // pending, approved, rejected
             };
             
-            // Отправка через Fetch API на ваш PHP-скрипт
-            fetch('send_appeal.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-                successMessage.style.display = 'block';
-                appealForm.reset();
-                
-                // Через 3 секунды закрываем форму
-                setTimeout(function() {
-                    appealModal.classList.remove('active');
-                    successMessage.style.display = 'none';
-                    document.body.style.overflow = '';
-                }, 3000);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже или свяжитесь с администрацией другим способом.');
-            });
+            // Сохраняем в хранилище
+            appealsStorage.push(appeal);
+            localStorage.setItem('discordAppeals', JSON.stringify(appealsStorage));
+            
+            // Показываем сообщение об успехе
+            successMessage.style.display = 'block';
+            appealForm.reset();
+            
+            // Через 3 секунды закрываем форму
+            setTimeout(function() {
+                appealModal.classList.remove('active');
+                successMessage.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 3000);
         });
+        
+        // Поиск апелляций по username
+        searchAppealsBtn.addEventListener('click', function() {
+            const username = searchUsernameInput.value.trim().toLowerCase();
+            
+            if (!username) {
+                alert('Пожалуйста, введите Discord username для поиска');
+                return;
+            }
+            
+            // Ищем апелляции пользователя
+            const userAppeals = appealsStorage.filter(appeal => 
+                appeal.username.toLowerCase() === username
+            );
+            
+            // Отображаем результаты
+            displayAppeals(userAppeals, `Результаты поиска для: ${username}`);
+        });
+        
+        // Функция для отображения ВСЕХ апелляций
+        function displayAllAppeals() {
+            appealsList.innerHTML = '';
+            
+            if (appealsStorage.length === 0) {
+                appealsList.innerHTML = '<div class="no-results">Апелляции не найдены</div>';
+                document.querySelector('.results-title').textContent = 'Все апелляции';
+            } else {
+                // Сортируем апелляции по дате (новые сверху)
+                const sortedAppeals = appealsStorage.sort((a, b) => b.id - a.id);
+                
+                sortedAppeals.forEach(appeal => {
+                    const appealItem = document.createElement('div');
+                    appealItem.className = 'appeal-item';
+                    
+                    let statusClass = 'status-pending';
+                    let statusText = 'На рассмотрении';
+                    
+                    if (appeal.status === 'approved') {
+                        statusClass = 'status-approved';
+                        statusText = 'Одобрена';
+                    } else if (appeal.status === 'rejected') {
+                        statusClass = 'status-rejected';
+                        statusText = 'Отклонена';
+                    }
+                    
+                    appealItem.innerHTML = `
+                        <div class="appeal-header">
+                            <div class="appeal-username">${appeal.username}</div>
+                            <div class="appeal-date">${appeal.date}</div>
+                        </div>
+                        <div class="appeal-details">
+                            <div class="appeal-detail">
+                                <span class="detail-label">Тип санкции:</span>
+                                <span class="detail-value">${appeal.ban_type}</span>
+                            </div>
+                            <div class="appeal-detail">
+                                <span class="detail-label">Причина санкции:</span>
+                                <span class="detail-value">${appeal.ban_reason}</span>
+                            </div>
+                            <div class="appeal-detail">
+                                <span class="detail-label">Обоснование апелляции:</span>
+                                <span class="detail-value">${appeal.appeal_text}</span>
+                            </div>
+                            <div class="appeal-detail">
+                                <span class="detail-label">Email для связи:</span>
+                                <span class="detail-value">${appeal.email}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="appeal-status ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                    
+                    appealsList.appendChild(appealItem);
+                });
+                
+                document.querySelector('.results-title').textContent = `Все апелляции (${appealsStorage.length})`;
+            }
+            
+            appealsResults.style.display = 'block';
+        }
+        
+        // Отображение списка апелляций (для поиска)
+        function displayAppeals(appeals, title = 'Результаты поиска') {
+            appealsList.innerHTML = '';
+            
+            if (appeals.length === 0) {
+                appealsList.innerHTML = '<div class="no-results">Апелляции не найдены для данного пользователя</div>';
+            } else {
+                appeals.forEach(appeal => {
+                    const appealItem = document.createElement('div');
+                    appealItem.className = 'appeal-item';
+                    
+                    let statusClass = 'status-pending';
+                    let statusText = 'На рассмотрении';
+                    
+                    if (appeal.status === 'approved') {
+                        statusClass = 'status-approved';
+                        statusText = 'Одобрена';
+                    } else if (appeal.status === 'rejected') {
+                        statusClass = 'status-rejected';
+                        statusText = 'Отклонена';
+                    }
+                    
+                    appealItem.innerHTML = `
+                        <div class="appeal-header">
+                            <div class="appeal-username">${appeal.username}</div>
+                            <div class="appeal-date">${appeal.date}</div>
+                        </div>
+                        <div class="appeal-details">
+                            <div class="appeal-detail">
+                                <span class="detail-label">Тип санкции:</span>
+                                <span class="detail-value">${appeal.ban_type}</span>
+                            </div>
+                            <div class="appeal-detail">
+                                <span class="detail-label">Причина санкции:</span>
+                                <span class="detail-value">${appeal.ban_reason}</span>
+                            </div>
+                            <div class="appeal-detail">
+                                <span class="detail-label">Обоснование апелляции:</span>
+                                <span class="detail-value">${appeal.appeal_text}</span>
+                            </div>
+                            <div class="appeal-detail">
+                                <span class="detail-label">Email для связи:</span>
+                                <span class="detail-value">${appeal.email}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="appeal-status ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                    
+                    appealsList.appendChild(appealItem);
+                });
+            }
+            
+            document.querySelector('.results-title').textContent = title;
+            appealsResults.style.display = 'block';
+        }
         
         // Функция для имитации загрузки данных о банах
         function simulateBansLoading() {
