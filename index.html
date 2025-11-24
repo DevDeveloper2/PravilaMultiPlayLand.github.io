@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[⚠️ Suspicious Content] <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -1360,6 +1360,7 @@
     <script>
     // УДАЛИ ЭТОТ БЛОК ЕСЛИ ОН УЖЕ ЕСТЬ В ТВОЕМ КОДЕ
     // Элементы страницы
+	const appealsStorage = JSON.parse(localStorage.getItem("appeals")) || [];
     const rulesPage = document.getElementById('rulesPage');
     const bansPage = document.getElementById('bansPage');
     const newsPage = document.getElementById('newsPage');
@@ -1944,6 +1945,8 @@
         });
         
         // Функция для отображения ВСЕХ апелляций
+		
+		
         function displayAllAppeals() {
             appealsList.innerHTML = '';
             
