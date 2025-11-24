@@ -1,4 +1,4 @@
-[⚠️ Suspicious Content] <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -1390,10 +1390,10 @@
     const resultsTitle = document.getElementById('resultsTitle');
     const resultsStats = document.getElementById('resultsStats');
     
-    // ОБЩАЯ БАЗА АПЕЛЛЯЦИЙ ДЛЯ ВСЕХ
+    // ОБЩАЯ БАЗА АПЕЛЛЯЦИЙ
     let globalAppeals = [];
 
-    // ФИКСИРОВАННЫЕ АПЕЛЛЯЦИИ КОТОРЫЕ ВИДНЫ ВСЕМ
+    // ФИКСИРОВАННЫЕ АПЕЛЛЯЦИИ
     const fixedAppeals = [
         {
             id: '1',
@@ -1414,59 +1414,125 @@
             appeal_text: 'Извиняюсь за свое поведение, это была шутка которая зашла слишком далю. Обещаю больше так не делать.',
             date: '2024-03-19 10:15',
             status: 'approved'
-        },
-        {
-            id: '3',
-            username: 'tech_wizard',
-            email: 'tech@domain.com',
-            ban_type: 'ban',
-            ban_reason: 'Распространение вредоносных ссылок',
-            appeal_text: 'Ссылка была безопасной, это был просто мод для игры. Могу предоставить доказательства.',
-            date: '2024-03-18 16:45',
-            status: 'rejected'
         }
     ];
 
     // Инициализация апелляций
     function initializeAppeals() {
+        console.log('Инициализация апелляций...');
+        
         // Всегда показываем фиксированные апелляции
         globalAppeals = [...fixedAppeals];
         
-        // Добавляем апелляции из localStorage текущего пользователя
-        const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
-        userAppeals.forEach(appeal => {
-            if (!globalAppeals.find(a => a.id === appeal.id)) {
-                globalAppeals.push(appeal);
-            }
-        });
+        // Добавляем апелляции из localStorage
+        try {
+            const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
+            console.log('Найдено апелляций в localStorage:', userAppeals.length);
+            
+            userAppeals.forEach(appeal => {
+                if (!globalAppeals.find(a => a.id === appeal.id)) {
+                    globalAppeals.push(appeal);
+                }
+            });
+        } catch (error) {
+            console.error('Ошибка при загрузке из localStorage:', error);
+        }
 
-        // Пытаемся загрузить общие апелляции из sessionStorage (временное решение)
-        const sharedAppeals = JSON.parse(sessionStorage.getItem('sharedAppeals')) || [];
-        sharedAppeals.forEach(appeal => {
-            if (!globalAppeals.find(a => a.id === appeal.id)) {
-                globalAppeals.push(appeal);
-            }
-        });
-
-        console.log('Загружено апелляций:', globalAppeals.length);
+        console.log('Всего апелляций:', globalAppeals.length);
     }
 
-    // Сохраняем апелляцию в общее хранилище
-    function saveToSharedStorage(appeal) {
-        // Сохраняем в localStorage пользователя
-        const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
-        userAppeals.push(appeal);
-        localStorage.setItem('discordAppeals', JSON.stringify(userAppeals));
+    // Сохраняем апелляцию
+    function saveAppeal(appeal) {
+        console.log('Сохранение апелляции:', appeal);
         
-        // Сохраняем в sessionStorage как временное общее хранилище
-        const sharedAppeals = JSON.parse(sessionStorage.getItem('sharedAppeals')) || [];
-        sharedAppeals.push(appeal);
-        sessionStorage.setItem('sharedAppeals', JSON.stringify(sharedAppeals));
-        
-        // Добавляем в текущий список
-        if (!globalAppeals.find(a => a.id === appeal.id)) {
-            globalAppeals.push(appeal);
+        try {
+            // Сохраняем в localStorage
+            const userAppeals = JSON.parse(localStorage.getItem('discordAppeals')) || [];
+            userAppeals.push(appeal);
+            localStorage.setItem('discordAppeals', JSON.stringify(userAppeals));
+            console.log('Сохранено в localStorage');
+            
+            // Добавляем в текущий список
+            if (!globalAppeals.find(a => a.id === appeal.id)) {
+                globalAppeals.push(appeal);
+                console.log('Добавлено в globalAppeals');
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Ошибка при сохранении:', error);
+            return false;
         }
+    }
+
+    // ПРОСТАЯ ФУНКЦИЯ ДЛЯ ОТПРАВКИ АПЕЛЛЯЦИИ
+    function submitAppeal(event) {
+        event.preventDefault();
+        console.log('Форма отправки вызвана');
+        
+        // Получаем значения полей
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const banType = document.getElementById('banType').value;
+        const banReason = document.getElementById('banReason').value;
+        const appealText = document.getElementById('appealText').value;
+        
+        console.log('Данные формы:', { username, email, banType, banReason, appealText });
+        
+        // Простая валидация
+        if (!username || !email || !banType || !banReason || !appealText) {
+            alert('Пожалуйста, заполните все поля!');
+            return;
+        }
+        
+        if (!validateEmail(email)) {
+            alert('Пожалуйста, введите корректный email!');
+            return;
+        }
+        
+        // Создаем объект апелляции
+        const appeal = {
+            id: Date.now().toString(),
+            username: username,
+            email: email,
+            ban_type: banType,
+            ban_reason: banReason,
+            appeal_text: appealText,
+            date: new Date().toLocaleString('ru-RU'),
+            status: 'pending'
+        };
+        
+        console.log('Создан объект апелляции:', appeal);
+        
+        // Сохраняем апелляцию
+        const saved = saveAppeal(appeal);
+        
+        if (saved) {
+            // Показываем сообщение об успехе
+            successMessage.style.display = 'block';
+            appealForm.reset();
+            
+            console.log('Апелляция успешно сохранена!');
+            
+            setTimeout(function() {
+                appealModal.classList.remove('active');
+                successMessage.style.display = 'none';
+                document.body.style.overflow = '';
+                
+                // Обновляем список апелляций если открыта страница
+                if (appealsPage.style.display === 'block') {
+                    displayAllAppeals();
+                }
+            }, 3000);
+        } else {
+            alert('Ошибка при сохранении апелляции!');
+        }
+    }
+
+    // Валидация email
+    function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
     }
     
     // Показать все апелляции
@@ -1651,78 +1717,6 @@
         appealsResults.style.display = 'block';
     }
 
-    // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ОТПРАВКИ АПЕЛЛЯЦИИ
-    appealForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const banType = document.getElementById('banType').value;
-        const banReason = document.getElementById('banReason').value;
-        const appealText = document.getElementById('appealText').value;
-        
-        // Валидация
-        let isValid = true;
-        
-        if (!validateDiscordUsername(username)) {
-            usernameError.style.display = 'block';
-            isValid = false;
-        } else {
-            usernameError.style.display = 'none';
-        }
-        
-        if (!validateEmail(email)) {
-            emailError.style.display = 'block';
-            isValid = false;
-        } else {
-            emailError.style.display = 'none';
-        }
-        
-        if (!isValid) return;
-        
-        // Создаем объект апелляции
-        const appeal = {
-            id: Date.now().toString(),
-            username: username,
-            email: email,
-            ban_type: banType,
-            ban_reason: banReason,
-            appeal_text: appealText,
-            date: new Date().toLocaleString('ru-RU'),
-            status: 'pending'
-        };
-        
-        // Сохраняем в общее хранилище
-        saveToSharedStorage(appeal);
-        
-        // Показываем сообщение об успехе
-        successMessage.style.display = 'block';
-        appealForm.reset();
-        
-        setTimeout(function() {
-            appealModal.classList.remove('active');
-            successMessage.style.display = 'none';
-            document.body.style.overflow = '';
-            
-            // Обновляем список апелляций
-            if (appealsPage.style.display === 'block') {
-                displayAllAppeals();
-            }
-        }, 3000);
-    });
-
-    // Валидация Discord username
-    function validateDiscordUsername(username) {
-        const regex = /^[a-zA-Z0-9_.]{2,32}$/;
-        return regex.test(username);
-    }
-    
-    // Валидация email
-    function validateEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    }
-
     // ОБНОВЛЕННАЯ ФУНКЦИЯ switchPage
     function switchPage(page) {
         transitionOverlay.classList.add('active');
@@ -1778,15 +1772,38 @@
 
     // Инициализация при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('Страница загружена, инициализация...');
+        
+        // Убедимся что элементы существуют
+        if (appealForm) {
+            console.log('Форма найдена, добавляем обработчик');
+            // УДАЛЯЕМ СТАРЫЕ ОБРАБОТЧИКИ И ДОБАВЛЯЕМ НОВЫЙ
+            appealForm.removeEventListener('submit', submitAppeal);
+            appealForm.addEventListener('submit', submitAppeal);
+        } else {
+            console.error('Форма не найдена!');
+        }
+        
         initializeAppeals();
         
-        // Периодически обновляем апелляции (каждые 10 секунд)
-        setInterval(() => {
+        // Тестовая функция для проверки
+        window.testAppeal = function() {
+            const testAppeal = {
+                id: Date.now().toString(),
+                username: 'test_user',
+                email: 'test@test.com',
+                ban_type: 'ban',
+                ban_reason: 'Тестовая причина',
+                appeal_text: 'Это тестовая апелляция',
+                date: new Date().toLocaleString('ru-RU'),
+                status: 'pending'
+            };
+            saveAppeal(testAppeal);
+            console.log('Тестовая апелляция добавлена!');
             if (appealsPage.style.display === 'block') {
-                initializeAppeals();
                 displayAllAppeals();
             }
-        }, 10000);
+        };
     });
         
         // Обработчики кнопок
